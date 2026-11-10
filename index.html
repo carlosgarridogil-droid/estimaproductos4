@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estimación de Productos - 4º Primaria</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka / Quicksand para toque infantil y legible -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Fredoka', 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%);
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        /* Contenedor principal con puntos dorados */
+        .gold-border-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.96);
+            border: 8px solid #FFD700;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15), inset 0 0 15px rgba(255,215,0,0.3);
+            border-radius: 2rem;
+        }
+
+        /* Estilo de los 6 Puntos Dorados */
+        .gold-dot {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: radial-gradient(circle, #FFF7AD 0%, #FFA900 70%, #D48800 100%);
+            border: 2.5px solid #FFFFFF;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.8);
+            z-index: 20;
+            animation: pulse-gold 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-gold {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px #ffd700); }
+            50% { transform: scale(1.15); filter: drop-shadow(0 0 8px #ffaa00); }
+        }
+
+        /* Posicionamiento de los 6 puntos */
+        .dot-top-left { top: -14px; left: -14px; }
+        .dot-top-right { top: -14px; right: -14px; }
+        .dot-mid-left { top: 50%; left: -14px; transform: translateY(-50%); }
+        .dot-mid-right { top: 50%; right: -14px; transform: translateY(-50%); }
+        .dot-bottom-left { bottom: -14px; left: -14px; }
+        .dot-bottom-right { bottom: -14px; right: -14px; }
+
+        /* Botones 3D interactivos */
+        .btn-3d {
+            transition: all 0.15s ease;
+            position: relative;
+            top: 0;
+            box-shadow: 0 8px 0 var(--btn-shadow-color), 0 12px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn-3d:hover {
+            top: -3px;
+            box-shadow: 0 11px 0 var(--btn-shadow-color), 0 16px 22px rgba(0,0,0,0.25);
+        }
+
+        .btn-3d:active {
+            top: 5px;
+            box-shadow: 0 3px 0 var(--btn-shadow-color), 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .btn-yellow {
+            --btn-shadow-color: #d97706;
+            background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
+            color: #78350f;
+        }
+
+        .btn-green {
+            --btn-shadow-color: #15803d;
+            background: linear-gradient(180deg, #4ade80 0%, #22c55e 100%);
+            color: #052e16;
+        }
+
+        .btn-blue {
+            --btn-shadow-color: #1d4ed8;
+            background: linear-gradient(180deg, #60a5fa 0%, #3b82f6 100%);
+            color: #1e3a8a;
+        }
+
+        .btn-purple {
+            --btn-shadow-color: #6b21a8;
+            background: linear-gradient(180deg, #c084fc 0%, #a855f7 100%);
+            color: #3b0764;
+        }
+
+        /* Efecto Flotante para tarjetas/iconos 3D */
+        .float-3d {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        /* Tarjeta de Aprende con estilo libro */
+        .aprende-box {
+            background: #f0fdf4;
+            border: 4px dashed #4ade80;
+            border-radius: 1.5rem;
+        }
+
+        /* Modal personalizado */
+        .modal-overlay {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4 min-h-screen">
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div id="mainCard" class="gold-border-card w-full max-w-4xl p-6 md:p-10 my-4 text-center">
+        <!-- 6 PUNTOS DORADOS DECORATIVOS EN EL MARCO -->
+        <div class="gold-dot dot-top-left"></div>
+        <div class="gold-dot dot-top-right"></div>
+        <div class="gold-dot dot-mid-left"></div>
+        <div class="gold-dot dot-mid-right"></div>
+        <div class="gold-dot dot-bottom-left"></div>
+        <div class="gold-dot dot-bottom-right"></div>
+
+        <!-- ================= PANTALLA INICIAL ================= -->
+        <div id="screenHome" class="space-y-6">
+            <div class="inline-block bg-yellow-300 text-yellow-900 px-4 py-1.5 rounded-full font-bold text-sm md:text-base shadow-sm border border-yellow-400">
+                ⭐ MATEMÁTICAS - 4º PRIMARIA ⭐
+            </div>
+
+            <div class="space-y-2">
+                <h1 class="text-4xl md:text-6xl font-black text-emerald-800 tracking-wide drop-shadow-md">
+                    ESTIMACIÓN DE PRODUCTOS
+                </h1>
+                <p class="text-xl md:text-2xl font-bold text-teal-600">UNIDAD 2</p>
+            </div>
+
+            <!-- TRES ICONOS 3D RELACIONADOS CON MATEMÁTICAS -->
+            <div class="flex justify-center items-center gap-6 md:gap-12 py-4">
+                <div class="float-3d bg-amber-100 p-5 md:p-6 rounded-3xl border-4 border-amber-300 shadow-xl flex flex-col items-center">
+                    <span class="text-5xl md:text-6xl">📐</span>
+                    <span class="text-xs md:text-sm font-bold text-amber-800 mt-2">Geometría</span>
+                </div>
+                <div class="float-3d bg-sky-100 p-5 md:p-6 rounded-3xl border-4 border-sky-300 shadow-xl flex flex-col items-center" style="animation-delay: -1.3s;">
+                    <span class="text-5xl md:text-6xl">🧮</span>
+                    <span class="text-xs md:text-sm font-bold text-sky-800 mt-2">Ábaco</span>
+                </div>
+                <div class="float-3d bg-purple-100 p-5 md:p-6 rounded-3xl border-4 border-purple-300 shadow-xl flex flex-col items-center" style="animation-delay: -2.6s;">
+                    <span class="text-5xl md:text-6xl">🔢</span>
+                    <span class="text-xs md:text-sm font-bold text-purple-800 mt-2">Números</span>
+                </div>
+            </div>
+
+            <!-- BOTONES PRINCIPALES -->
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-5 pt-4">
+                <button onclick="goToExplanation()" class="btn-3d btn-yellow w-full sm:w-auto px-8 py-4 rounded-2xl text-2xl font-extrabold flex items-center justify-center gap-3">
+                    💡 Explicación
+                </button>
+                <button onclick="startGame()" class="btn-3d btn-green w-full sm:w-auto px-10 py-4 rounded-2xl text-2xl font-extrabold flex items-center justify-center gap-3">
+                    🚀 Comenzar
+                </button>
+            </div>
+
+            <!-- FIRMA DEL MAESTRO -->
+            <div class="pt-4 pb-2">
+                <p class="text-lg md:text-xl font-extrabold text-emerald-800 bg-emerald-100/80 inline-block px-6 py-2 rounded-full border-2 border-emerald-300 shadow-sm">
+                    👨‍🏫 Elaborado por el maestro Carlos Garrido
+                </p>
+            </div>
+        </div>
+
+        <!-- ================= PANTALLA EXPLICACIÓN (APRENDE) ================= -->
+        <div id="screenExplanation" class="hidden space-y-6 text-left">
+            <div class="flex justify-between items-center border-b-4 border-emerald-200 pb-3">
+                <h2 class="text-3xl font-black text-emerald-800 flex items-center gap-3">
+                    <span class="bg-emerald-500 text-white rounded-2xl p-2 text-xl">💡</span> Aprende
+                </h2>
+                <button onclick="speakText(getExplanationText())" class="btn-3d btn-purple px-4 py-2 rounded-xl font-bold flex items-center gap-2 text-base">
+                    🔊 Escuchar Audio
+                </button>
+            </div>
+
+            <!-- RECUADRO REGLA DEL LIBRO -->
+            <div class="aprende-box p-5 md:p-6 text-emerald-950 font-bold text-lg md:text-xl shadow-inner">
+                <p>
+                    📌 <span class="text-emerald-700">Para estimar un producto:</span> aproxima el factor de más de una cifra y multiplica la aproximación por el otro factor.
+                </p>
+            </div>
+
+            <h3 class="text-2xl font-bold text-slate-800 mt-4">3 Ejemplos paso a paso:</h3>
+
+            <!-- 3 EJEMPLOS PASO A PASO -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <!-- Ejemplo 1 -->
+                <div class="bg-blue-50 border-3 border-blue-200 rounded-2xl p-4 shadow-md flex flex-col justify-between">
+                    <div>
+                        <span class="bg-blue-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase">Ejemplo 1 (Libro)</span>
+                        <p class="text-2xl font-black text-blue-900 my-2">2.841 × 3</p>
+                        <p class="text-sm text-slate-700 font-semibold mb-2">1º Aproxima 2.841 a los millares:</p>
+                        <p class="text-lg font-bold text-blue-700 bg-white p-2 rounded-lg border border-blue-200 text-center">2.841 ➔ 3.000</p>
+                        <p class="text-sm text-slate-700 font-semibold my-2">2º Multiplica por 3:</p>
+                        <p class="text-lg font-bold text-emerald-600 bg-white p-2 rounded-lg border border-emerald-200 text-center">3.000 × 3 = 9.000</p>
+                    </div>
+                    <button onclick="speakText('Ejemplo 1. Para estimar 2.841 por 3: primero aproximamos 2.841 a los millares, que es 3.000. Luego multiplicamos 3.000 por 3, obteniendo 9.000.')" class="mt-3 text-xs font-bold text-blue-700 hover:underline flex items-center justify-center gap-1">
+                        🔊 Escuchar ejemplo
+                    </button>
+                </div>
+
+                <!-- Ejemplo 2 -->
+                <div class="bg-amber-50 border-3 border-amber-200 rounded-2xl p-4 shadow-md flex flex-col justify-between">
+                    <div>
+                        <span class="bg-amber-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase">Ejemplo 2</span>
+                        <p class="text-2xl font-black text-amber-900 my-2">435 × 6</p>
+                        <p class="text-sm text-slate-700 font-semibold mb-2">1º Aproxima 435 a las centenas:</p>
+                        <p class="text-lg font-bold text-amber-700 bg-white p-2 rounded-lg border border-amber-200 text-center">435 ➔ 400</p>
+                        <p class="text-sm text-slate-700 font-semibold my-2">2º Multiplica por 6:</p>
+                        <p class="text-lg font-bold text-emerald-600 bg-white p-2 rounded-lg border border-emerald-200 text-center">400 × 6 = 2.400</p>
+                    </div>
+                    <button onclick="speakText('Ejemplo 2. Para estimar 435 por 6: aproxima 435 a las centenas, que es 400. Después multiplica 400 por 6 para obtener 2.400.')" class="mt-3 text-xs font-bold text-amber-700 hover:underline flex items-center justify-center gap-1">
+                        🔊 Escuchar ejemplo
+                    </button>
+                </div>
+
+                <!-- Ejemplo 3 -->
+                <div class="bg-purple-50 border-3 border-purple-200 rounded-2xl p-4 shadow-md flex flex-col justify-between">
+                    <div>
+                        <span class="bg-purple-600 text-white text-xs font-black px-3 py-1 rounded-full uppercase">Ejemplo 3</span>
+                        <p class="text-2xl font-black text-purple-900 my-2">4.567 × 8</p>
+                        <p class="text-sm text-slate-700 font-semibold mb-2">1º Aproxima 4.567 a los millares:</p>
+                        <p class="text-lg font-bold text-purple-700 bg-white p-2 rounded-lg border border-purple-200 text-center">4.567 ➔ 5.000</p>
+                        <p class="text-sm text-slate-700 font-semibold my-2">2º Multiplica por 8:</p>
+                        <p class="text-lg font-bold text-emerald-600 bg-white p-2 rounded-lg border border-emerald-200 text-center">5.000 × 8 = 40.000</p>
+                    </div>
+                    <button onclick="speakText('Ejemplo 3. Para estimar 4.567 por 8: aproxima 4.567 a los millares, que es 5.000. Multiplica 5.000 por 8 y da 40.000.')" class="mt-3 text-xs font-bold text-purple-700 hover:underline flex items-center justify-center gap-1">
+                        🔊 Escuchar ejemplo
+                    </button>
+                </div>
+            </div>
+
+            <!-- BOTÓN VOLVER -->
+            <div class="text-center pt-4">
+                <button onclick="goToHome()" class="btn-3d btn-blue px-8 py-3 rounded-2xl text-xl font-bold">
+                    🏠 Volver al Inicio
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= PANTALLA JUEGO / PREGUNTAS ================= -->
+        <div id="screenGame" class="hidden space-y-6">
+            <!-- CABECERA JUEGO -->
+            <div class="flex flex-wrap justify-between items-center gap-3 bg-teal-50 p-3 rounded-2xl border-2 border-teal-200">
+                <span id="questionCounter" class="text-lg font-extrabold text-teal-800 bg-teal-200 px-4 py-1.5 rounded-xl">
+                    Pregunta 1 de 10
+                </span>
+                
+                <div id="scoreDisplay" class="text-lg font-extrabold text-amber-700 bg-amber-100 px-4 py-1.5 rounded-xl flex items-center gap-1">
+                    ⭐ Puntos: <span id="scoreValue">0</span>
+                </div>
+
+                <button onclick="showHelpModal()" class="btn-3d btn-yellow px-4 py-2 rounded-xl font-extrabold text-sm flex items-center gap-2">
+                    ❓ Ayuda Redondeo
+                </button>
+            </div>
+
+            <!-- CARD PREGUNTA PRINCIPAL -->
+            <div class="bg-amber-50/60 border-4 border-amber-300 rounded-3xl p-6 shadow-md space-y-6">
+                <p class="text-lg font-extrabold text-slate-700">Calcula la estimación de la siguiente multiplicación:</p>
+                
+                <!-- OPERACIÓN EN NÚMEROS GRANDES -->
+                <div class="text-4xl md:text-6xl font-black text-indigo-900 bg-white py-4 px-6 rounded-2xl shadow-inner inline-block border-2 border-indigo-100 tracking-wider">
+                    <span id="numFactorBig">4567</span> × <span id="numFactorSingle">8</span>
+                </div>
+
+                <!-- ESTRUCTURA DE RESPUESTA INTERACTIVA PASO A PASO -->
+                <div class="bg-white p-6 rounded-3xl border-3 border-indigo-200 shadow-md max-w-2xl mx-auto">
+                    <p class="text-sm md:text-base font-extrabold text-indigo-900 mb-4 text-center">Completa la estimación paso a paso:</p>
+                    
+                    <div class="flex flex-wrap items-center justify-center gap-3 md:gap-4 text-2xl md:text-3xl font-black text-slate-800">
+                        <!-- 1. CASILLA 1º APROXIMA -->
+                        <div class="flex flex-col items-center">
+                            <span class="text-xs font-bold text-emerald-700 mb-1">1º Aproxima</span>
+                            <input type="number" id="inputApprox" placeholder="Aproxima" class="w-32 md:w-40 text-center text-xl md:text-2xl font-black p-2.5 bg-emerald-50 border-3 border-emerald-400 rounded-2xl focus:border-emerald-600 focus:bg-white focus:outline-none shadow-sm">
+                        </div>
+
+                        <!-- 2. SIGNO MULTIPLICACIÓN -->
+                        <span class="text-indigo-600 self-end pb-3 text-3xl font-black">×</span>
+
+                        <!-- 3. CASILLA OTRO FACTOR -->
+                        <div class="flex flex-col items-center">
+                            <span class="text-xs font-bold text-amber-700 mb-1">Otro factor</span>
+                            <input type="number" id="inputFactor" placeholder="Factor" class="w-20 md:w-24 text-center text-xl md:text-2xl font-black p-2.5 bg-amber-50 border-3 border-amber-400 rounded-2xl focus:border-amber-600 focus:bg-white focus:outline-none shadow-sm">
+                        </div>
+
+                        <!-- 4. SIGNO IGUAL -->
+                        <span class="text-indigo-600 self-end pb-3 text-3xl font-black">=</span>
+
+                        <!-- 5. CASILLA RESULTADO FINAL ESTIMADO -->
+                        <div class="flex flex-col items-center">
+                            <span class="text-xs font-bold text-blue-700 mb-1">Resultado final</span>
+                            <input type="number" id="inputResult" placeholder="Resultado" class="w-36 md:w-44 text-center text-xl md:text-2xl font-black p-2.5 bg-blue-50 border-3 border-blue-400 rounded-2xl focus:border-blue-600 focus:bg-white focus:outline-none shadow-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MENSAJE DE FEEDBACK -->
+                <div id="feedbackMsg" class="min-h-[40px] flex items-center justify-center font-bold text-xl rounded-xl p-2 transition-all"></div>
+
+                <!-- ACCIONES -->
+                <div class="flex justify-center gap-4">
+                    <button id="btnCheck" onclick="checkAnswer()" class="btn-3d btn-green px-8 py-3 rounded-2xl text-xl font-extrabold">
+                        Comprobar Respuesta ✔️
+                    </button>
+                    <button id="btnNext" onclick="nextQuestion()" class="btn-3d btn-blue px-8 py-3 rounded-2xl text-xl font-extrabold hidden">
+                        Siguiente ➔
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PANTALLA INFORME FINAL (RESULTADOS DETALLADOS) ================= -->
+        <div id="screenResults" class="hidden space-y-6 text-left">
+            <!-- CABECERA DEL INFORME -->
+            <div class="text-center space-y-2">
+                <div id="badgeHeader" class="text-6xl animate-bounce">🏆</div>
+                <h2 id="titleReport" class="text-3xl md:text-5xl font-black text-emerald-800">Informe de Resultados</h2>
+                <p id="subTitleReport" class="text-lg font-bold text-slate-600">Revisa tus respuestas de la prueba de Estimación</p>
+            </div>
+
+            <!-- BLOQUE RESUMEN ACIERTOS VS ERRORES -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-emerald-100 border-4 border-emerald-300 p-5 rounded-3xl text-center shadow-md">
+                    <p class="text-lg font-bold text-emerald-800">Aciertos Total</p>
+                    <p class="text-5xl font-black text-emerald-600 my-1" id="correctCount">0</p>
+                    <span class="text-emerald-700 font-semibold text-sm">Preguntas correctas de 10</span>
+                </div>
+                <div class="bg-rose-100 border-4 border-rose-300 p-5 rounded-3xl text-center shadow-md">
+                    <p class="text-lg font-bold text-rose-800">Errores Total</p>
+                    <p class="text-5xl font-black text-rose-600 my-1" id="errorCount">0</p>
+                    <span class="text-rose-700 font-semibold text-sm">Preguntas a mejorar</span>
+                </div>
+            </div>
+
+            <!-- TARJETA DEL MENSAJE EVALUATIVO Y PEDAGÓGICO -->
+            <div id="evalCard" class="p-6 rounded-3xl border-4 text-center shadow-lg space-y-3 transition-all">
+                <h3 id="evalTitle" class="text-2xl md:text-3xl font-black"></h3>
+                <p id="evalMsg" class="text-lg md:text-xl font-bold leading-relaxed"></p>
+                <button onclick="speakText(document.getElementById('evalTitle').textContent + '. ' + document.getElementById('evalMsg').textContent)" class="btn-3d btn-purple px-4 py-2 rounded-xl text-sm font-bold inline-flex items-center gap-2">
+                    🔊 Escuchar Evaluación
+                </button>
+            </div>
+
+            <!-- DESGLOSE DE LAS 10 PREGUNTAS -->
+            <div class="space-y-4">
+                <h3 class="text-2xl font-black text-slate-800 border-b-4 border-emerald-200 pb-2">
+                    📋 Desglose de las 10 Preguntas:
+                </h3>
+                <div id="questionsList" class="grid grid-cols-1 gap-3 max-h-96 overflow-y-auto pr-2">
+                    <!-- Generado dinámicamente -->
+                </div>
+            </div>
+
+            <!-- BOTONES DE ACCIÓN FINAL -->
+            <div class="pt-4 flex flex-col sm:flex-row justify-center gap-4">
+                <button onclick="startGame()" class="btn-3d btn-green px-8 py-3 rounded-2xl text-xl font-extrabold flex items-center justify-center gap-2">
+                    🔄 Jugar de Nuevo
+                </button>
+                <button onclick="goToExplanation()" class="btn-3d btn-yellow px-8 py-3 rounded-2xl text-xl font-extrabold flex items-center justify-center gap-2">
+                    💡 Ver Explicación
+                </button>
+                <button onclick="goToHome()" class="btn-3d btn-blue px-8 py-3 rounded-2xl text-xl font-extrabold flex items-center justify-center gap-2">
+                    🏠 Menú Principal
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= MODAL DE AYUDA (REDONDEO) ================= -->
+    <div id="helpModal" class="fixed inset-0 modal-overlay flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white border-4 border-yellow-400 rounded-3xl max-w-2xl w-full p-6 space-y-5 shadow-2xl relative">
+            <div class="flex justify-between items-center border-b-2 border-slate-100 pb-3">
+                <h3 class="text-2xl font-black text-amber-700 flex items-center gap-2">
+                    💡 Regla del Redondeo
+                </h3>
+                <button onclick="speakText(getHelpText())" class="btn-3d btn-purple px-3 py-1.5 rounded-xl font-bold text-sm">
+                    🔊 Escuchar
+                </button>
+            </div>
+
+            <div class="space-y-4 text-left text-slate-800 text-base md:text-lg">
+                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200">
+                    <p class="font-bold text-amber-900">1. Factor a estimar:</p>
+                    <p>Estimamos siempre el factor que tiene <strong>más de una cifra</strong> (ej: en 4567 × 8, estimamos el 4567).</p>
+                </div>
+
+                <div class="bg-blue-50 p-3 rounded-xl border border-blue-200">
+                    <p class="font-bold text-blue-900">2. En qué cifra nos fijamos:</p>
+                    <p>Nos fijamos en la <strong>cifra situada justo a la derecha</strong> de la primera cifra de la izquierda (la cifra de mayor orden).</p>
+                    <ul class="list-disc list-inside mt-2 space-y-1 font-semibold text-slate-700">
+                        <li>Si acaba/sigue en <span class="text-red-600 font-extrabold">1, 2, 3 o 4</span> ➔ La primera cifra <strong>SE QUEDA IGUAL</strong>.</li>
+                        <li>Si acaba/sigue en <span class="text-emerald-600 font-extrabold">5, 6, 7, 8 o 9</span> ➔ Se le <strong>SUMA 1</strong> a la primera cifra.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200">
+                    <p class="font-bold text-emerald-900">3. Rellenar con ceros:</p>
+                    <p>Todas las demás cifras de la derecha se convierten automáticamente en <strong>CEROS (0)</strong>.</p>
+                </div>
+            </div>
+
+            <div class="text-center pt-2">
+                <button onclick="closeHelpModal()" class="btn-3d btn-yellow px-8 py-2.5 rounded-xl text-lg font-extrabold">
+                    ¡Entendido! 👍
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE LÓGICA Y VOZ -->
+    <script>
+        // Variables de estado del juego
+        let currentQuestion = 0;
+        let score = 0;
+        let questions = [];
+        let currentProblem = {};
+        let userAnswersHistory = [];
+
+        // Sintetizador de Voz (Web Speech API)
+        const synth = window.speechSynthesis;
+
+        function speakText(text) {
+            if (!synth) return;
+            synth.cancel(); // Detener locución previa
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'es-ES';
+            utterance.rate = 0.95; // Velocidad pausada adecuada para niños
+            utterance.pitch = 1.05;
+            synth.speak(utterance);
+        }
+
+        // Textos para locución
+        function getExplanationText() {
+            return "Para estimar un producto, aproxima el factor de más de una cifra y multiplica la aproximación por el otro factor.";
+        }
+
+        function getHelpText() {
+            return "Primero, estimamos el factor con más de una cifra. Nos fijamos en la cifra a la derecha de la primera. Si es 1, 2, 3 o 4, dejamos la cifra igual. Si es 5, 6, 7, 8 o 9, le sumamos 1. Después, completamos todos los demás huecos con ceros.";
+        }
+
+        // Navegación de pantallas
+        function showScreen(screenId) {
+            ['screenHome', 'screenExplanation', 'screenGame', 'screenResults'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+            synth.cancel();
+        }
+
+        function goToHome() {
+            showScreen('screenHome');
+        }
+
+        function goToExplanation() {
+            showScreen('screenExplanation');
+            speakText("Pestaña de explicación. " + getExplanationText());
+        }
+
+        // Lógica de Generación de Preguntas Aleatorias
+        function generateQuestions() {
+            const list = [];
+            
+            for (let i = 0; i < 10; i++) {
+                const isFourDigits = i % 2 === 0;
+                let multiDigitFactor, singleDigitFactor;
+
+                if (isFourDigits) {
+                    multiDigitFactor = Math.floor(Math.random() * 8999) + 1000; // 1000 - 9999
+                } else {
+                    multiDigitFactor = Math.floor(Math.random() * 899) + 100; // 100 - 999
+                }
+
+                singleDigitFactor = Math.floor(Math.random() * 7) + 2; // 2 - 9
+
+                const approx = roundToHighestOrder(multiDigitFactor);
+                const finalProduct = approx * singleDigitFactor;
+
+                list.push({
+                    multi: multiDigitFactor,
+                    single: singleDigitFactor,
+                    approx: approx,
+                    product: finalProduct
+                });
+            }
+            return list;
+        }
+
+        // Función matemática para redondear al mayor orden
+        function roundToHighestOrder(num) {
+            const numStr = num.toString();
+            const length = numStr.length;
+            const firstDigit = parseInt(numStr[0]);
+            const secondDigit = parseInt(numStr[1]);
+
+            let roundedFirstDigit = firstDigit;
+            if (secondDigit >= 5) {
+                roundedFirstDigit += 1;
+            }
+
+            return roundedFirstDigit * Math.pow(10, length - 1);
+        }
+
+        // Iniciar Juego
+        function startGame() {
+            questions = generateQuestions();
+            currentQuestion = 0;
+            score = 0;
+            userAnswersHistory = [];
+            document.getElementById('scoreValue').textContent = score;
+            showScreen('screenGame');
+            loadQuestion();
+            speakText("¡Comenzamos el juego! Responde a las 10 preguntas de estimación.");
+        }
+
+        function loadQuestion() {
+            currentProblem = questions[currentQuestion];
+            
+            document.getElementById('questionCounter').textContent = `Pregunta ${currentQuestion + 1} de 10`;
+            document.getElementById('numFactorBig').textContent = currentProblem.multi.toLocaleString('es-ES');
+            document.getElementById('numFactorSingle').textContent = currentProblem.single;
+
+            const inputApprox = document.getElementById('inputApprox');
+            const inputFactor = document.getElementById('inputFactor');
+            const inputResult = document.getElementById('inputResult');
+
+            inputApprox.value = '';
+            inputFactor.value = '';
+            inputResult.value = '';
+
+            inputApprox.disabled = false;
+            inputFactor.disabled = false;
+            inputResult.disabled = false;
+            
+            const feedback = document.getElementById('feedbackMsg');
+            feedback.textContent = '';
+            feedback.className = 'min-h-[40px] flex items-center justify-center font-bold text-xl rounded-xl p-2 transition-all';
+
+            document.getElementById('btnCheck').classList.remove('hidden');
+            document.getElementById('btnNext').classList.add('hidden');
+        }
+
+        function checkAnswer() {
+            const userApprox = parseInt(document.getElementById('inputApprox').value);
+            const userFactor = parseInt(document.getElementById('inputFactor').value);
+            const userResult = parseInt(document.getElementById('inputResult').value);
+            const feedback = document.getElementById('feedbackMsg');
+
+            if (isNaN(userApprox) || isNaN(userFactor) || isNaN(userResult)) {
+                feedback.textContent = '⚠️ ¡Por favor, completa las 3 casillas antes de comprobar!';
+                feedback.classList.add('bg-amber-200', 'text-amber-900');
+                speakText("Por favor, completa las tres casillas.");
+                return;
+            }
+
+            const isApproxCorrect = userApprox === currentProblem.approx;
+            const isFactorCorrect = userFactor === currentProblem.single;
+            const isResultCorrect = userResult === currentProblem.product;
+            const isAllCorrect = isApproxCorrect && isFactorCorrect && isResultCorrect;
+
+            // Guardar en historial para el informe final
+            userAnswersHistory.push({
+                problem: currentProblem,
+                userApprox: userApprox,
+                userFactor: userFactor,
+                userResult: userResult,
+                isCorrect: isAllCorrect
+            });
+
+            document.getElementById('inputApprox').disabled = true;
+            document.getElementById('inputFactor').disabled = true;
+            document.getElementById('inputResult').disabled = true;
+            document.getElementById('btnCheck').classList.add('hidden');
+            document.getElementById('btnNext').classList.remove('hidden');
+
+            if (isAllCorrect) {
+                score++;
+                document.getElementById('scoreValue').textContent = score;
+                feedback.textContent = '🎉 ¡Excelente! Toda la estimación está perfectamente calculada.';
+                feedback.classList.add('bg-emerald-200', 'text-emerald-900');
+                speakText("¡Excelente! Toda la estimación está perfectamente calculada.");
+            } else {
+                let errors = [];
+                if (!isApproxCorrect) errors.push(`Aproximación (${currentProblem.approx})`);
+                if (!isFactorCorrect) errors.push(`Factor (${currentProblem.single})`);
+                if (!isResultCorrect) errors.push(`Resultado (${currentProblem.product})`);
+
+                const textErr = '❌ Revisa: ' + errors.join(', ');
+                feedback.textContent = textErr;
+                feedback.classList.add('bg-red-200', 'text-red-900');
+                speakText("Vaya, hay algún fallo. " + textErr);
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < 10) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // PANTALLA INFORME FINAL (CÁLCULO DE ERRORES Y MENSAJE EVALUATIVO)
+        function showResults() {
+            showScreen('screenResults');
+            
+            const totalErrors = 10 - score;
+            document.getElementById('correctCount').textContent = score;
+            document.getElementById('errorCount').textContent = totalErrors;
+
+            const badgeHeader = document.getElementById('badgeHeader');
+            const evalCard = document.getElementById('evalCard');
+            const evalTitle = document.getElementById('evalTitle');
+            const evalMsg = document.getElementById('evalMsg');
+
+            let titleText = "";
+            let msgText = "";
+
+            // EVALUACIÓN SEGÚN EL NÚMERO DE ERRORES (REGLAS SOLICITADAS)
+            if (totalErrors > 5) {
+                // Más de 5 errores (de 0 a 4 aciertos)
+                badgeHeader.textContent = "💪";
+                evalCard.className = "p-6 rounded-3xl border-4 text-center shadow-lg space-y-3 bg-red-50 border-red-300 text-red-900";
+                titleText = "¡Debes seguir practicando! 💪";
+                msgText = `Has cometido ${totalErrors} errores. No te preocupes, revisa la explicación paso a paso y vuelve a intentarlo para dominar la estimación.`;
+            } else if (totalErrors >= 3 && totalErrors <= 5) {
+                // 3, 4 o 5 errores (de 5 a 7 aciertos) - Tienes 5 o menos errores, pero tienes que seguir practicando
+                badgeHeader.textContent = "👍";
+                evalCard.className = "p-6 rounded-3xl border-4 text-center shadow-lg space-y-3 bg-amber-50 border-amber-300 text-amber-900";
+                titleText = "¡Buen trabajo! 👍";
+                msgText = `Has tenido ${score} aciertos y solo ${totalErrors} errores. ¡Tienes 5 o menos errores! Sin embargo, aún tienes que seguir practicando un poco más para convertirte en un verdadero maestro del redondeo.`;
+            } else {
+                // 0, 1 o 2 errores (8 a 10 aciertos) - Totalmente preparado
+                badgeHeader.textContent = "🌟";
+                evalCard.className = "p-6 rounded-3xl border-4 text-center shadow-lg space-y-3 bg-emerald-50 border-emerald-400 text-emerald-950";
+                titleText = "¡FANTÁSTICO! 🌟";
+                msgText = `¡Enhorabuena! Con solo ${totalErrors} ${totalErrors === 1 ? 'error' : 'errores'}, estás súper preparado para el examen de estimación de productos.`;
+            }
+
+            evalTitle.textContent = titleText;
+            evalMsg.textContent = msgText;
+
+            // GENERAR LISTADO DETALLADO DE PREGUNTAS
+            const qList = document.getElementById('questionsList');
+            qList.innerHTML = '';
+
+            userAnswersHistory.forEach((ans, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `p-4 rounded-2xl border-2 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 ${
+                    ans.isCorrect ? 'bg-emerald-50 border-emerald-300' : 'bg-rose-50 border-rose-300'
+                }`;
+
+                const statusBadge = ans.isCorrect 
+                    ? `<span class="bg-emerald-500 text-white font-extrabold px-3 py-1 rounded-xl text-xs">✔️ CORRECTO</span>`
+                    : `<span class="bg-rose-500 text-white font-extrabold px-3 py-1 rounded-xl text-xs">❌ ERROR</span>`;
+
+                const questionText = `${ans.problem.multi.toLocaleString('es-ES')} × ${ans.problem.single}`;
+                const userResp = `${ans.userApprox} × ${ans.userFactor} = ${ans.userResult}`;
+                const correctResp = `${ans.problem.approx} × ${ans.problem.single} = ${ans.problem.product}`;
+
+                itemDiv.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="font-black text-slate-700">P${index + 1}:</span>
+                            <span class="text-xl font-black text-indigo-900">${questionText}</span>
+                            ${statusBadge}
+                        </div>
+                        <p class="text-sm font-semibold text-slate-600">
+                            Tu respuesta: <span class="font-bold text-slate-800">${userResp}</span>
+                        </p>
+                    </div>
+                    ${!ans.isCorrect ? `
+                        <div class="bg-white p-2.5 rounded-xl border border-rose-200 text-xs font-bold text-rose-800">
+                            Respuesta correcta: <span class="text-emerald-700 font-extrabold">${correctResp}</span>
+                        </div>
+                    ` : ''}
+                `;
+
+                qList.appendChild(itemDiv);
+            });
+
+            speakText(`${titleText}. ${msgText}`);
+        }
+
+        // Funciones del Modal de Ayuda
+        function showHelpModal() {
+            document.getElementById('helpModal').classList.remove('hidden');
+            speakText(getHelpText());
+        }
+
+        function closeHelpModal() {
+            document.getElementById('helpModal').classList.add('hidden');
+            synth.cancel();
+        }
+    </script>
+</body>
+</html>
